@@ -48,6 +48,7 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        implementation project(':ashley')
         
     }
 }
@@ -71,6 +72,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
+        implementation project(':ashley')
         
     }
 }
@@ -88,6 +90,7 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+        implementation project(':ashley')
         
     }
 }
@@ -97,6 +100,7 @@ project(":core") {
 
 
     dependencies {
+        implementation project(':ashley')
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         
