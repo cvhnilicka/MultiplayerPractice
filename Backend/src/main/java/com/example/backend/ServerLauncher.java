@@ -26,6 +26,8 @@ public class ServerLauncher {
     private final AtomicInteger idCounter = new AtomicInteger();
     private final Vertx vertx = Vertx.vertx();
 
+    public static int numClients = 0;
+
 
 
     public static void main(final String... args) throws Exception {
@@ -36,12 +38,20 @@ public class ServerLauncher {
         serializer = new JsonSerializer();
     }
 
+    public static void updateNumClient(int change) {
+        numClients += change;
+    }
+
+    public static int getNumClients() {
+        return numClients;
+    }
+
     private void launch() {
         System.out.println("Launching web socket server...");
         final HttpServer server = vertx.createHttpServer();
         server.websocketHandler(webSocket -> {
             // Printing received packets to console, sending response:
-            webSocket.frameHandler(frame -> handleFrame(webSocket, frame));
+//            webSocket.frameHandler(frame -> handleFrame(webSocket, frame));
 
 
             // So i am wondering if i can create classes/function handlers to handle different incoming requests
@@ -54,10 +64,17 @@ public class ServerLauncher {
 //            Go back to step 2.
 
 
+            Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx);
+            t.start();
+
+
+
+
 
             // Closing the socket in 5 seconds:
-            vertx.setTimer(5000L, id -> webSocket.close());
+//            vertx.setTimer(5000L, id -> webSocket.close());
         }).listen(8000);
+
     }
 
     private void handleFrame(final ServerWebSocket webSocket, final WebSocketFrame frame) {

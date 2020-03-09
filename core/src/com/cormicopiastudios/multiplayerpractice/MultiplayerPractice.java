@@ -10,6 +10,7 @@ import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
 import com.cormicopiastudios.multiplayerpractice.Menus.MainMenu;
 import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
+import com.example.shared.ServerState;
 import com.github.czyzby.websocket.AbstractWebSocketListener;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketAdapter;
@@ -35,6 +36,8 @@ public class MultiplayerPractice extends Game {
 	private MainMenu mainMenu;
 	public final static int MAINMENU = 2;
 
+	private int i = 0;
+
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
@@ -54,8 +57,12 @@ public class MultiplayerPractice extends Game {
 
 	public void sendMessage() {
 		final MessageObject message = new MessageObject();
-		message.message = "This is a new message";
+		message.message = "This is a new message " + i;
 		socket.send(message);
+		final ServerState getState = new ServerState();
+		getState.numClients = -1;
+		socket.send(getState);
+		i++;
 	}
 
 	public WebSocket getSocket() {
@@ -92,6 +99,9 @@ public class MultiplayerPractice extends Game {
 				if (packet instanceof PersonObject) {
 					final PersonObject jsonMessage = (PersonObject) packet;
 					message = jsonMessage.name + jsonMessage.id + "!";
+				}
+				if (packet instanceof ServerState) {
+					System.out.println("Num clients: " + ((ServerState)packet).numClients);
 				}
 				return FULLY_HANDLED;
 			}
