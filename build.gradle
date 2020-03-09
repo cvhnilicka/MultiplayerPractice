@@ -49,6 +49,7 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         implementation project(':ashley')
+        api "com.github.czyzby:gdx-websocket-common:1.9.1.9.6"
         
     }
 }
@@ -104,6 +105,17 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "io.socket:socket.io-client:0.6.2"
+        api "org.java-websocket:Java-WebSocket:1.4.0"
+        api "javax.websocket:javax.websocket-api:1.1"
+        api "com.github.czyzby:gdx-websocket:1.9.1.9.6"
         
+    }
+}
+
+project(":Backend") {
+    apply plugin: "java"
+
+    dependencies {
+        implementation "io.vertx:vertx-core:3.6.2"
     }
 }
