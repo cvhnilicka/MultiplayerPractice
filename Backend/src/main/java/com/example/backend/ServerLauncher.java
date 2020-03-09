@@ -4,6 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 
 
+import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
 import com.github.czyzby.websocket.serialization.Serializer;
 import com.github.czyzby.websocket.serialization.impl.Base64Serializer;
@@ -41,6 +42,15 @@ public class ServerLauncher {
         server.websocketHandler(webSocket -> {
             // Printing received packets to console, sending response:
             webSocket.frameHandler(frame -> handleFrame(webSocket, frame));
+
+
+            // So i am wondering if i can create classes/function handlers to handle different incoming requests
+            // i can spawn/use threads then to process the incoming requests.
+
+
+
+
+
             // Closing the socket in 5 seconds:
             vertx.setTimer(5000L, id -> webSocket.close());
         }).listen(8000);
@@ -50,7 +60,11 @@ public class ServerLauncher {
         // Deserializing received message:
         final Object request = serializer.deserialize(frame.binaryData().getBytes());
         if (request instanceof PersonObject) {
-            System.out.println("Received message: " + ((PersonObject) request).name);
+            System.out.println("Received PERSON: " + ((PersonObject) request).name);
+        }
+        if (request instanceof MessageObject) {
+            System.out.println("Received MESSAGE: " + ((MessageObject) request).message);
+
         }
 
         // Sending a simple response message after 1 second:

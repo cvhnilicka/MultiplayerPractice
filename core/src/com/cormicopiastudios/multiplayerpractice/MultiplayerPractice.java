@@ -5,10 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
 import com.github.czyzby.websocket.AbstractWebSocketListener;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketAdapter;
+import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
 import com.github.czyzby.websocket.data.WebSocketException;
@@ -29,7 +31,7 @@ public class MultiplayerPractice extends ApplicationAdapter {
 		// Note: you can also use WebSockets.newSocket() and WebSocket.toWebSocketUrl() methods.
 		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8000);
 //		socket = WebSockets.newSocket("http://127.0.0.1:8000");
-		socket.addListener(getListener());
+		socket.addListener((WebSocketListener) getListener());
 		socket.connect();
 	}
 
@@ -38,16 +40,23 @@ public class MultiplayerPractice extends ApplicationAdapter {
 
 			@Override
 			public boolean onOpen(final WebSocket webSocket) {
+				System.out.println("Connected");
 				message = "Connected!";
 				final PersonObject myMessage = new PersonObject();
 				myMessage.name = "Cormick";
+
+
+				final MessageObject messageObject = new MessageObject();
+				messageObject.message = "MESSAGE";
 				webSocket.send(myMessage);
+				webSocket.send(messageObject);
 				return FULLY_HANDLED;
 			}
 
 			@Override
 			public boolean onClose(final WebSocket webSocket, final WebSocketCloseCode code, final String reason) {
 				message = "Disconnected!";
+				System.out.println("Disconnected");
 				return FULLY_HANDLED;
 			}
 
