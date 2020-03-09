@@ -5,10 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.example.shared.PersonObject;
+import com.github.czyzby.websocket.AbstractWebSocketListener;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketAdapter;
 import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
+import com.github.czyzby.websocket.data.WebSocketException;
 import com.github.czyzby.websocket.net.ExtendedNet;
 import java.net.URI;
 
@@ -16,6 +19,9 @@ import java.net.URI;
 public class MultiplayerPractice extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private WebSocket socket;
+
+
+	private String message = "Connecting...";
 
 	@Override
 	public void create() {
@@ -27,24 +33,30 @@ public class MultiplayerPractice extends ApplicationAdapter {
 		socket.connect();
 	}
 
-	private static WebSocketAdapter getListener() {
-		return new WebSocketAdapter() {
+	private AbstractWebSocketListener getListener() {
+		return new AbstractWebSocketListener() {
+
 			@Override
 			public boolean onOpen(final WebSocket webSocket) {
-				Gdx.app.log("WS", "Connected!");
-				webSocket.send("Hello from client!");
+				message = "Connected!";
+				final PersonObject myMessage = new PersonObject();
+				myMessage.name = "Cormick";
+				webSocket.send(myMessage);
 				return FULLY_HANDLED;
 			}
 
 			@Override
 			public boolean onClose(final WebSocket webSocket, final WebSocketCloseCode code, final String reason) {
-				Gdx.app.log("WS", "Disconnected - status: " + code + ", reason: " + reason);
+				message = "Disconnected!";
 				return FULLY_HANDLED;
 			}
 
 			@Override
-			public boolean onMessage(final WebSocket webSocket, final String packet) {
-				Gdx.app.log("WS", "Got message: " + packet);
+			protected boolean onMessage(final WebSocket webSocket, final Object packet) {
+				if (packet instanceof PersonObject) {
+					final PersonObject jsonMessage = (PersonObject) packet;
+					message = jsonMessage.name + jsonMessage.id + "!";
+				}
 				return FULLY_HANDLED;
 			}
 		};

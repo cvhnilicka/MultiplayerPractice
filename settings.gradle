@@ -1,2 +1,2 @@
-include ':Backend'
+include ':Backend', ':shared'
 include 'desktop', 'android', 'html', 'core', ':ashley', ':tests', ':benchmarks'
