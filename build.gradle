@@ -45,11 +45,12 @@ project(":desktop") {
 
     dependencies {
         implementation project(":core")
+        implementation "com.github.czyzby:gdx-websocket-common:1.9.1.9.6"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         implementation project(':ashley')
-        
+
     }
 }
 
@@ -91,7 +92,7 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
         implementation project(':ashley')
-        
+
     }
 }
 
@@ -104,6 +105,34 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "io.socket:socket.io-client:0.6.2"
-        
+        api "org.java-websocket:Java-WebSocket:1.4.0"
+        api "javax.websocket:javax.websocket-api:1.1"
+        implementation "com.github.czyzby:gdx-websocket:1.9.1.9.6"
+        implementation project(':shared')
+
     }
 }
+
+project(":shared") {
+    apply plugin: "java"
+
+    dependencies {
+        implementation "com.github.czyzby:gdx-websocket:1.9.1.9.6"
+        implementation "com.github.czyzby:gdx-websocket-serialization:1.9.1.9.6"
+
+    }
+}
+
+project(":Backend") {
+    apply plugin: "java"
+
+    dependencies {
+        implementation project(":shared")
+        implementation "io.vertx:vertx-core:3.6.2"
+        implementation "com.github.czyzby:gdx-websocket:1.9.1.9.6"
+        implementation "com.github.czyzby:gdx-websocket-serialization:1.9.1.9.6"
+
+    }
+}
+
+
