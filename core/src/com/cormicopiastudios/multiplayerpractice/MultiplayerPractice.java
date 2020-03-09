@@ -1,10 +1,13 @@
 package com.cormicopiastudios.multiplayerpractice;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
+import com.cormicopiastudios.multiplayerpractice.Menus.MainMenu;
 import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
 import com.github.czyzby.websocket.AbstractWebSocketListener;
@@ -18,12 +21,19 @@ import com.github.czyzby.websocket.net.ExtendedNet;
 import java.net.URI;
 
 
-public class MultiplayerPractice extends ApplicationAdapter {
+public class MultiplayerPractice extends Game {
 	private SpriteBatch batch;
 	private WebSocket socket;
 
 
 	private String message = "Connecting...";
+
+
+	private LoadingScreen loadingScreen;
+	public final static int LOADING = 1;
+
+	private MainMenu mainMenu;
+	public final static int MAINMENU = 2;
 
 	@Override
 	public void create() {
@@ -32,7 +42,24 @@ public class MultiplayerPractice extends ApplicationAdapter {
 		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8000);
 //		socket = WebSockets.newSocket("http://127.0.0.1:8000");
 		socket.addListener((WebSocketListener) getListener());
+		changeScreen(LOADING);
+
+	}
+
+	public void connectSocket() {
 		socket.connect();
+		mainMenu = new MainMenu(this);
+		this.setScreen(mainMenu);
+	}
+
+	public void sendMessage() {
+		final MessageObject message = new MessageObject();
+		message.message = "This is a new message";
+		socket.send(message);
+	}
+
+	public WebSocket getSocket() {
+		return socket;
 	}
 
 	private AbstractWebSocketListener getListener() {
@@ -73,15 +100,28 @@ public class MultiplayerPractice extends ApplicationAdapter {
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.end();
+		super.render();
 	}
 
 	@Override
 	public void dispose() {
 		WebSockets.closeGracefully(socket); // Null-safe closing method that catches and logs any exceptions.
 		batch.dispose();
+	}
+
+
+
+
+	public void changeScreen(int screen) {
+		switch (screen) {
+			// need to add cases
+			case LOADING: if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
+				this.setScreen(loadingScreen);
+				break;
+			case MAINMENU: if (mainMenu == null) mainMenu = new MainMenu(this);
+				this.setScreen(mainMenu);
+				break;
+
+		}
 	}
 }

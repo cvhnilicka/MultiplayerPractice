@@ -47,7 +47,11 @@ public class ServerLauncher {
             // So i am wondering if i can create classes/function handlers to handle different incoming requests
             // i can spawn/use threads then to process the incoming requests.
 
-
+//            1. Initialize the server socket
+//            2. Wait for a client to connect
+//            3. Accept the client connection
+//            4. Create a daemon thread to support the client
+//            Go back to step 2.
 
 
 
