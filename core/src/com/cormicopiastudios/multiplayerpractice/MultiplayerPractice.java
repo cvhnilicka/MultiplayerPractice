@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
 import com.cormicopiastudios.multiplayerpractice.Menus.MainMenu;
 import com.example.shared.MessageObject;
@@ -19,7 +20,11 @@ import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
 import com.github.czyzby.websocket.data.WebSocketException;
 import com.github.czyzby.websocket.net.ExtendedNet;
+import com.google.gson.Gson;
+
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.Map;
 
 
 public class MultiplayerPractice extends Game {
@@ -35,6 +40,9 @@ public class MultiplayerPractice extends Game {
 
 	private MainMenu mainMenu;
 	public final static int MAINMENU = 2;
+
+	private GameMaster gameMaster;
+	public final static int GAME = 3;
 
 	private int i = 0;
 
@@ -101,7 +109,11 @@ public class MultiplayerPractice extends Game {
 					message = jsonMessage.name + jsonMessage.id + "!";
 				}
 				if (packet instanceof ServerState) {
+					ServerState temp = (ServerState)packet;
+					Gson g = new Gson();
+					Map m = g.fromJson(temp.json, Map.class);
 					System.out.println("Num clients: " + ((ServerState)packet).numClients);
+
 				}
 				return FULLY_HANDLED;
 			}
@@ -130,6 +142,8 @@ public class MultiplayerPractice extends Game {
 				break;
 			case MAINMENU: if (mainMenu == null) mainMenu = new MainMenu(this);
 				this.setScreen(mainMenu);
+				break;
+			case GAME: gameMaster = new GameMaster(this, socket);
 				break;
 
 		}
