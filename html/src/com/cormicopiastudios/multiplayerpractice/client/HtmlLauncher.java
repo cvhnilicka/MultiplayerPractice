@@ -4,12 +4,14 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.cormicopiastudios.multiplayerpractice.MultiplayerPractice;
+import com.github.czyzby.websocket.GwtWebSockets;
 
 public class HtmlLauncher extends GwtApplication {
 
         // USE THIS CODE FOR A FIXED SIZE APPLICATION
         @Override
         public GwtApplicationConfiguration getConfig () {
+                GwtWebSockets.initiate();
                 return new GwtApplicationConfiguration(480, 320);
         }
         // END CODE FOR FIXED SIZE APPLICATION

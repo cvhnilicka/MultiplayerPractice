@@ -91,7 +91,11 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+        implementation "com.github.czyzby:gdx-websocket-gwt:1.9.1.9.6"
+        implementation "com.github.czyzby:gdx-websocket-gwt:1.9.1.9.6:sources"
+        implementation "com.github.czyzby:gdx-websocket:1.9.1.9.6:sources"
         implementation project(':ashley')
+        implementation project(':shared')
 
     }
 }

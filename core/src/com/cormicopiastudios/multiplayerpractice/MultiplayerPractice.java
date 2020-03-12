@@ -20,7 +20,6 @@ import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
 import com.github.czyzby.websocket.data.WebSocketException;
 import com.github.czyzby.websocket.net.ExtendedNet;
-import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -50,7 +49,7 @@ public class MultiplayerPractice extends Game {
 	public void create() {
 		batch = new SpriteBatch();
 		// Note: you can also use WebSockets.newSocket() and WebSocket.toWebSocketUrl() methods.
-		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8000);
+		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8765);
 //		socket = WebSockets.newSocket("http://127.0.0.1:8000");
 		socket.addListener((WebSocketListener) getListener());
 		changeScreen(LOADING);
@@ -110,8 +109,7 @@ public class MultiplayerPractice extends Game {
 				}
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
-					Gson g = new Gson();
-					Map m = g.fromJson(temp.json, Map.class);
+
 					System.out.println("Num clients: " + ((ServerState)packet).numClients);
 
 				}

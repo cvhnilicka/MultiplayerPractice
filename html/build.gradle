@@ -70,6 +70,8 @@ task dist(dependsOn: [clean, compileGwt]) {
 task addSource {
     doLast {
         sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+        sourceSets.main.compileClasspath += files(project(':ashley').sourceSets.main.allJava.srcDirs)
+        sourceSets.main.compileClasspath += files(project(':shared').sourceSets.main.allJava.srcDirs)
     }
 }
 
