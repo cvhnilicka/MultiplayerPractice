@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpServer;
 import com.badlogic.gdx.math.Vector2;
 import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
+import com.example.shared.PlayerPos;
 import com.github.czyzby.websocket.serialization.Serializer;
 import com.github.czyzby.websocket.serialization.impl.Base64Serializer;
 import com.github.czyzby.websocket.serialization.impl.JsonSerializer;
@@ -33,7 +34,7 @@ public class ServerLauncher {
 
     public static int numClients = 0;
 
-    public static Map<Long, Vector2> m = Collections.synchronizedMap(new HashMap<>());
+    public static Map<Long, PlayerPos> m = Collections.synchronizedMap(new HashMap<Long,PlayerPos>());
 
 
 
@@ -72,7 +73,7 @@ public class ServerLauncher {
 
 
             Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx);
-            m.put(t.getId(),new Vector2());
+            m.put(t.getId(),new PlayerPos());
             t.start();
 
         }).listen(8765);

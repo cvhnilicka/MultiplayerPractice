@@ -6,12 +6,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.JsonValue;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
 import com.cormicopiastudios.multiplayerpractice.Menus.MainMenu;
 import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
+import com.example.shared.PlayerPos;
 import com.example.shared.ServerState;
+import com.example.shared.SharedUtils;
 import com.github.czyzby.websocket.AbstractWebSocketListener;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketAdapter;
@@ -20,9 +23,15 @@ import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
 import com.github.czyzby.websocket.data.WebSocketException;
 import com.github.czyzby.websocket.net.ExtendedNet;
+import com.google.gwt.core.client.JsonUtils;
+
+
+import com.google.gwt.json.client.*;
+
 
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -43,6 +52,10 @@ public class MultiplayerPractice extends Game {
 	private GameMaster gameMaster;
 	public final static int GAME = 3;
 
+	public Map<Long, PlayerPos> m = new HashMap<>();
+
+	public Long tid;
+
 	private int i = 0;
 
 	@Override
@@ -53,6 +66,7 @@ public class MultiplayerPractice extends Game {
 //		socket = WebSockets.newSocket("http://127.0.0.1:8000");
 		socket.addListener((WebSocketListener) getListener());
 		changeScreen(LOADING);
+		m = new HashMap<>();
 
 	}
 
@@ -106,12 +120,12 @@ public class MultiplayerPractice extends Game {
 				if (packet instanceof PersonObject) {
 					final PersonObject jsonMessage = (PersonObject) packet;
 					message = jsonMessage.name + jsonMessage.id + "!";
+					tid = jsonMessage.thread;
+//					m.put(jsonMessage.thread, jsonMessage);
 				}
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
-
-					System.out.println("Num clients: " + ((ServerState)packet).numClients);
-
+					SharedUtils.stringToMap(m,temp.json);
 				}
 				return FULLY_HANDLED;
 			}

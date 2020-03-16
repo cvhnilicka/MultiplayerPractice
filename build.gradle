@@ -114,6 +114,8 @@ project(":core") {
         implementation "com.github.czyzby:gdx-websocket:1.9.1.9.6"
         implementation project(':shared')
         implementation 'com.google.code.gson:gson:2.8.6'
+        implementation 'com.google.gwt:gwt-servlet:2.8.0'
+        implementation 'com.google.gwt:gwt-user:2.8.2'
 
     }
 }

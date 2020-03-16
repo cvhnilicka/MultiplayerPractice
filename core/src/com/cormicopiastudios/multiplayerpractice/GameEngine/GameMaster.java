@@ -43,7 +43,7 @@ public class GameMaster {
             final PlayerPos posUpdate = new PlayerPos();
             posUpdate.x = pos.x;
             posUpdate.y = pos.y;
-
+            parent.m.put(parent.tid, posUpdate);
             socket.send(posUpdate);
         }
     }
