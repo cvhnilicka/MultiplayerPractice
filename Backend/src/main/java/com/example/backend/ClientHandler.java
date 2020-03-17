@@ -51,6 +51,8 @@ public class ClientHandler extends Thread {
 //            state.json = gson.toJson(ServerLauncher.m);
 //            wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
 //        });
+
+        // delay the updates going out until 1 sec
         vertx.setTimer(1000, id -> {
             timerId = vertx.setPeriodic(15, i -> {
 //                System.out.println("Sending Update");
