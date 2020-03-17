@@ -4,12 +4,18 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 
 
+import com.badlogic.gdx.math.Vector2;
 import com.example.shared.MessageObject;
 import com.example.shared.PersonObject;
+import com.example.shared.PlayerPos;
 import com.github.czyzby.websocket.serialization.Serializer;
 import com.github.czyzby.websocket.serialization.impl.Base64Serializer;
 import com.github.czyzby.websocket.serialization.impl.JsonSerializer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.vertx.core.Vertx;
@@ -25,8 +31,14 @@ public class ServerLauncher {
     private final Serializer serializer;
     private final AtomicInteger idCounter = new AtomicInteger();
     private final Vertx vertx = Vertx.vertx();
+    HttpServer server;
 
     public static int numClients = 0;
+
+    public static Map<Long, PlayerPos> m = Collections.synchronizedMap(new HashMap<Long,PlayerPos>());
+
+
+    static ArrayList<Thread> handlers = new ArrayList<>();
 
 
 
@@ -49,9 +61,9 @@ public class ServerLauncher {
     private void launch() {
         System.out.println("Launching web socket server...");
         final HttpServer server = vertx.createHttpServer();
+        this.server = server;
         server.websocketHandler(webSocket -> {
             // Printing received packets to console, sending response:
-//            webSocket.frameHandler(frame -> handleFrame(webSocket, frame));
 
 
             // So i am wondering if i can create classes/function handlers to handle different incoming requests
@@ -63,35 +75,27 @@ public class ServerLauncher {
 //            4. Create a daemon thread to support the client
 //            Go back to step 2.
 
-
             Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx);
+            newClientJoin(t.getId());
+            ServerLauncher.handlers.add(t);
+            m.put(t.getId(),new PlayerPos());
             t.start();
 
-
-
-
-
-            // Closing the socket in 5 seconds:
-//            vertx.setTimer(5000L, id -> webSocket.close());
-        }).listen(8000);
+        }).listen(8765);
 
     }
 
-    private void handleFrame(final ServerWebSocket webSocket, final WebSocketFrame frame) {
-        // Deserializing received message:
-        final Object request = serializer.deserialize(frame.binaryData().getBytes());
-        if (request instanceof PersonObject) {
-            System.out.println("Received PERSON: " + ((PersonObject) request).name);
+    public void newClientJoin(long tid){
+        // somehow need to send a message to all other clients that a new client has joined
+        // in socket io this would be a broadcast
+        for (Thread t : ServerLauncher.handlers) {
+            ((ClientHandler)t).newClientMessage(tid);
         }
-        if (request instanceof MessageObject) {
-            System.out.println("Received MESSAGE: " + ((MessageObject) request).message);
-
-        }
-
-        // Sending a simple response message after 1 second:
-        final PersonObject response = new PersonObject();
-        response.id = idCounter.getAndIncrement();
-        response.name = "Hello client ";
-        vertx.setTimer(1000L, id -> webSocket.writeFinalBinaryFrame(Buffer.buffer(serializer.serialize(response))));
     }
+
+    public static void updateMap(long id, float x, float y) {
+        m.get(id).x = x;
+        m.get(id).y = y;
+    }
+
 }
