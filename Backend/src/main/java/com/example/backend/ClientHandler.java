@@ -51,8 +51,8 @@ public class ClientHandler extends Thread {
 //            state.json = gson.toJson(ServerLauncher.m);
 //            wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
 //        });
-
-            timerId = vertx.setPeriodic(15, id -> {
+        vertx.setTimer(1000, id -> {
+            timerId = vertx.setPeriodic(15, i -> {
 //                System.out.println("Sending Update");
                 ServerState state = new ServerState();
                 state.numClients = ServerLauncher.numClients;
@@ -60,6 +60,9 @@ public class ClientHandler extends Thread {
                 state.json = toSend;
                 wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
             });
+        });
+
+
 
 
 
@@ -104,6 +107,7 @@ public class ClientHandler extends Thread {
             response.id = idCounter.getAndIncrement();
             response.thread = this.getId();
             response.name = "Hello client ";
+            System.out.println(response.name);
             webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(response)));
         }
         if (request instanceof MessageObject) {

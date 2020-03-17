@@ -43,11 +43,9 @@ public class SharedUtils {
                 //update
                 ((PlayerPos)clientMap.get(Long.valueOf(posInfo[0]))).x = newPos.x;
                 ((PlayerPos)clientMap.get(Long.valueOf(posInfo[0]))).y = newPos.y;
-
             } else {
                 // add
                 clientMap.put(Long.valueOf(posInfo[0]), newPos);
-
             }
 
 
