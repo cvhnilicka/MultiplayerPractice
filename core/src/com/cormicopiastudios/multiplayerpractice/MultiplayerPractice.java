@@ -99,12 +99,7 @@ public class MultiplayerPractice extends Game {
 				message = "Connected!";
 				final PersonObject myMessage = new PersonObject();
 				myMessage.name = "Cormick";
-
-
-				final MessageObject messageObject = new MessageObject();
-				messageObject.message = "MESSAGE";
 				webSocket.send(myMessage);
-				webSocket.send(messageObject);
 				return FULLY_HANDLED;
 			}
 
@@ -121,11 +116,17 @@ public class MultiplayerPractice extends Game {
 					final PersonObject jsonMessage = (PersonObject) packet;
 					message = jsonMessage.name + jsonMessage.id + "!";
 					tid = jsonMessage.thread;
-//					m.put(jsonMessage.thread, jsonMessage);
+				}
+				if (packet instanceof MessageObject) {
+					final MessageObject me = (MessageObject)packet;
+					gameMaster.instance.createPlayerCharacter(me.id);
+					System.out.println(me.message);
+					m.put(Long.valueOf(me.id), new PlayerPos());
 				}
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
 					SharedUtils.stringToMap(m,temp.json);
+//					System.out.println(m);
 				}
 				return FULLY_HANDLED;
 			}
@@ -142,6 +143,8 @@ public class MultiplayerPractice extends Game {
 		WebSockets.closeGracefully(socket); // Null-safe closing method that catches and logs any exceptions.
 		batch.dispose();
 	}
+
+	public Map getM() {return m;}
 
 
 

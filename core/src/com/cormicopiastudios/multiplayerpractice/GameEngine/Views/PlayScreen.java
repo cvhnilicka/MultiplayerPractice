@@ -19,6 +19,7 @@ import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PhysicsDebugSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PhysicsSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PlayerControlSystem;
+import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.TransformSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.controllers.InputController;
 
 public class PlayScreen implements Screen {
@@ -30,7 +31,7 @@ public class PlayScreen implements Screen {
     static final float FRUTSUM_W = Gdx.graphics.getWidth()/PPM;
     static final float FRUTSUM_H = Gdx.graphics.getHeight()/PPM;
 
-    private GameMaster gameMaster;
+    public GameMaster gameMaster;
     private World world;
     private BodyFactory bodyFactory;
     private PooledEngine engine;
@@ -60,13 +61,42 @@ public class PlayScreen implements Screen {
 
         engine.addSystem(new PhysicsSystem(world, inputController, gameMaster));
         engine.addSystem(new PhysicsDebugSystem(world,gamecam));
-//        engine.addSystem(new );
-
-
         createPlayer();
         engine.addSystem(new PlayerControlSystem(inputController, engine, gameMaster));
+        engine.addSystem(new TransformSystem(engine,this));
 
 
+    }
+
+    public void createPlayerCharacter(long tid) {
+        float posx = -4;
+        float posy = 0;
+        // create the entity and all the components in it
+        Entity newClient = engine.createEntity();
+        BodyComponent b2BodyComponent = engine.createComponent(BodyComponent.class);
+        TransformComponent transformComponent = engine.createComponent(TransformComponent.class);
+        PlayerComponent playerComponent = engine.createComponent(PlayerComponent.class);
+
+        // create the data for the components
+        b2BodyComponent.body = bodyFactory.makeBoxPolyBody(posx,posy,2,2,
+                BodyFactory.FIXTURE_TYPE.STEEL, BodyDef.BodyType.DynamicBody,true);
+
+        // set object pos
+        transformComponent.position.set(posx,posy,0);
+        transformComponent.scale.x = 2f;
+        transformComponent.scale.y = 2f;
+        b2BodyComponent.body.setUserData(newClient);
+        playerComponent.tid = tid;
+        playerComponent.remote = true;
+        System.out.println("Remote Player TID: " + playerComponent.tid);
+
+        // add components to entity
+        newClient.add(b2BodyComponent);
+        newClient.add(transformComponent);
+        newClient.add(playerComponent);
+
+        // add to engine
+        engine.addEntity(newClient);
     }
 
     public void createPlayer() {
@@ -88,6 +118,9 @@ public class PlayScreen implements Screen {
         transformComponent.scale.y = 2f;
         b2BodyComponent.body.setUserData(player);
         playerComponent.cam = gamecam;
+        playerComponent.tid = gameMaster.parent.tid;
+        playerComponent.remote = false;
+        System.out.println("Local Player TID: " + playerComponent.tid);
 
         // add components to entity
         player.add(b2BodyComponent);
@@ -97,6 +130,9 @@ public class PlayScreen implements Screen {
         // add to engine
         engine.addEntity(player);
     }
+
+
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(inputController);

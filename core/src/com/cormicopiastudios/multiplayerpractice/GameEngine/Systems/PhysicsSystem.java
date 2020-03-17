@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Components.BodyComponent;
+import com.cormicopiastudios.multiplayerpractice.GameEngine.Components.PlayerComponent;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Components.TransformComponent;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.controllers.InputController;
@@ -53,14 +54,14 @@ public class PhysicsSystem extends IntervalIteratingSystem {
             TransformComponent tfm = tm.get(ent);
             BodyComponent bodyComp = bm.get(ent);
             Vector2 pos = bodyComp.body.getPosition();
-            if (tfm.position.x != pos.x || tfm.position.y != pos.y) {
+            if ((tfm.position.x != pos.x || tfm.position.y != pos.y) && !ent.getComponent(PlayerComponent.class).remote) {
                 master.sendPosUpdate(pos);
             }
             tfm.position.x = pos.x;
             tfm.position.y = pos.y;
 
 
-            bodyComp.body.setTransform(pos, MathUtils.degreesToRadians * tfm.rotation);
+            bodyComp.body.setTransform(new Vector2(tfm.position.x,tfm.position.y), MathUtils.degreesToRadians * tfm.rotation);
 
             }
 

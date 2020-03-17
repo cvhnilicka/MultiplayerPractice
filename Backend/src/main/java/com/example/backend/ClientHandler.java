@@ -52,8 +52,8 @@ public class ClientHandler extends Thread {
 //            wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
 //        });
 
-            timerId = vertx.setPeriodic(1000, id -> {
-                System.out.println("Sending Update");
+            timerId = vertx.setPeriodic(15, id -> {
+//                System.out.println("Sending Update");
                 ServerState state = new ServerState();
                 state.numClients = ServerLauncher.numClients;
                 String toSend = SharedUtils.serverMapToString(ServerLauncher.m);
@@ -68,9 +68,17 @@ public class ClientHandler extends Thread {
             System.out.println("The socket has been closed");
             ServerLauncher.updateNumClient(-1);
             ServerLauncher.m.remove((Long)this.getId());
+            ServerLauncher.handlers.remove((Thread)this);
             vertx.cancelTimer(timerId);
         });
 
+    }
+
+    public void newClientMessage(long tid) {
+        MessageObject newClient = new MessageObject();
+        newClient.message = "New Client has joined with id " + tid;
+        newClient.id = (int)tid;
+        wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(newClient)));
     }
 
     private void sendUpdate() {
@@ -92,6 +100,11 @@ public class ClientHandler extends Thread {
         final Object request = serializer.deserialize(frame.binaryData().getBytes());
         if (request instanceof PersonObject) {
             System.out.println("Received PERSON: " + ((PersonObject) request).name);
+            final PersonObject response = new PersonObject();
+            response.id = idCounter.getAndIncrement();
+            response.thread = this.getId();
+            response.name = "Hello client ";
+            webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(response)));
         }
         if (request instanceof MessageObject) {
             System.out.println("Received MESSAGE: " + ((MessageObject) request).message);
@@ -104,6 +117,7 @@ public class ClientHandler extends Thread {
             Gson gson = new Gson();
             state.json = gson.toJson(ServerLauncher.m);
             webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
+
         }
 
         if (request instanceof PlayerPos) {
@@ -113,11 +127,7 @@ public class ClientHandler extends Thread {
         }
 
         // Sending a simple response message after 1 second:
-        final PersonObject response = new PersonObject();
-        response.id = idCounter.getAndIncrement();
-        response.thread = this.getId();
-        response.name = "Hello client ";
-        webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(response)));
+
     }
 
 }

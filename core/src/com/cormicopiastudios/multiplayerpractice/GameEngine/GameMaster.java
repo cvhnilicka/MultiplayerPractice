@@ -15,12 +15,12 @@ import java.util.Set;
 
 public class GameMaster {
 
-    private MultiplayerPractice parent;
+    public MultiplayerPractice parent;
+    public PlayScreen instance;
 
     public final static int V_WIDTH = 48;
     public final static int V_HIEGHT = 48;
-//    public final static int V_WIDTH = 128;
-//    public final static int V_HIEGHT = 128;
+
 
 
 
@@ -34,8 +34,10 @@ public class GameMaster {
     public GameMaster(MultiplayerPractice parent, WebSocket socket) {
         this.parent = parent;
         this.socket = socket;
-        parent.setScreen(new PlayScreen(this));
         socket.connect();
+        instance = new PlayScreen(this);
+        parent.setScreen(instance);
+
     }
 
     public void sendPosUpdate(Vector2 pos) {

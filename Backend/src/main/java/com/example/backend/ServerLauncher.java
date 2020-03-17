@@ -31,10 +31,14 @@ public class ServerLauncher {
     private final Serializer serializer;
     private final AtomicInteger idCounter = new AtomicInteger();
     private final Vertx vertx = Vertx.vertx();
+    HttpServer server;
 
     public static int numClients = 0;
 
     public static Map<Long, PlayerPos> m = Collections.synchronizedMap(new HashMap<Long,PlayerPos>());
+
+
+    static ArrayList<Thread> handlers = new ArrayList<>();
 
 
 
@@ -57,9 +61,9 @@ public class ServerLauncher {
     private void launch() {
         System.out.println("Launching web socket server...");
         final HttpServer server = vertx.createHttpServer();
+        this.server = server;
         server.websocketHandler(webSocket -> {
             // Printing received packets to console, sending response:
-//            webSocket.frameHandler(frame -> handleFrame(webSocket, frame));
 
 
             // So i am wondering if i can create classes/function handlers to handle different incoming requests
@@ -71,13 +75,22 @@ public class ServerLauncher {
 //            4. Create a daemon thread to support the client
 //            Go back to step 2.
 
-
             Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx);
+            newClientJoin(t.getId());
+            ServerLauncher.handlers.add(t);
             m.put(t.getId(),new PlayerPos());
             t.start();
 
         }).listen(8765);
 
+    }
+
+    public void newClientJoin(long tid){
+        // somehow need to send a message to all other clients that a new client has joined
+        // in socket io this would be a broadcast
+        for (Thread t : ServerLauncher.handlers) {
+            ((ClientHandler)t).newClientMessage(tid);
+        }
     }
 
     public static void updateMap(long id, float x, float y) {

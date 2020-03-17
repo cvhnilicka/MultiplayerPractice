@@ -42,30 +42,32 @@ public class PlayerControlSystem extends IteratingSystem {
         BodyComponent b2body = b2m.get(entity);
         PlayerComponent player = pm.get(entity);
         TransformComponent trans = tm.get(entity);
+        if (!player.remote) {
 
 
-        int maxSpeed = 5;
-        boolean moved = false;
-        if(controller.left && b2body.body.getLinearVelocity().x > -maxSpeed){
-            b2body.body.applyLinearImpulse(new Vector2(-.5f,0), b2body.body.getWorldCenter(), true);
-            moved = true;
-        }
-        if(controller.right && b2body.body.getLinearVelocity().x < maxSpeed){
-            b2body.body.applyLinearImpulse(new Vector2(.5f,0), b2body.body.getWorldCenter(), true);
-            moved = true;
+            int maxSpeed = 5;
+            boolean moved = false;
+            if (controller.left && b2body.body.getLinearVelocity().x > -maxSpeed) {
+                b2body.body.applyLinearImpulse(new Vector2(-.5f, 0), b2body.body.getWorldCenter(), true);
+                moved = true;
+            }
+            if (controller.right && b2body.body.getLinearVelocity().x < maxSpeed) {
+                b2body.body.applyLinearImpulse(new Vector2(.5f, 0), b2body.body.getWorldCenter(), true);
+                moved = true;
 
 
-        }
+            }
 
-        if(controller.up && b2body.body.getLinearVelocity().y < maxSpeed){
-            b2body.body.applyLinearImpulse(new Vector2(0,.5f), b2body.body.getWorldCenter(), true);
-            moved = true;
+            if (controller.up && b2body.body.getLinearVelocity().y < maxSpeed) {
+                b2body.body.applyLinearImpulse(new Vector2(0, .5f), b2body.body.getWorldCenter(), true);
+                moved = true;
 
-        }
-        if(controller.down && b2body.body.getLinearVelocity().y > -maxSpeed){
-            moved = true;
-            b2body.body.applyLinearImpulse(new Vector2(0,-.5f), b2body.body.getWorldCenter(), true);
+            }
+            if (controller.down && b2body.body.getLinearVelocity().y > -maxSpeed) {
+                moved = true;
+                b2body.body.applyLinearImpulse(new Vector2(0, -.5f), b2body.body.getWorldCenter(), true);
 
+            }
         }
 
 
