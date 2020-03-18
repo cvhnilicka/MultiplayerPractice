@@ -1,5 +1,6 @@
 package com.cormicopiastudios.multiplayerpractice;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -126,6 +127,7 @@ public class MultiplayerPractice extends Game {
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
 					SharedUtils.stringToMap(m,temp.json);
+//					for(Entity e :)
 //					System.out.println(m);
 				}
 				return FULLY_HANDLED;

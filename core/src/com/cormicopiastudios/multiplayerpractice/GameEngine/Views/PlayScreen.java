@@ -19,6 +19,7 @@ import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PhysicsDebugSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PhysicsSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PlayerControlSystem;
+import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.PlayerSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.Systems.TransformSystem;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.controllers.InputController;
 
@@ -64,6 +65,7 @@ public class PlayScreen implements Screen {
         createPlayer();
         engine.addSystem(new PlayerControlSystem(inputController, engine, gameMaster));
         engine.addSystem(new TransformSystem(engine,this));
+        engine.addSystem(new PlayerSystem(this));
 
 
     }
