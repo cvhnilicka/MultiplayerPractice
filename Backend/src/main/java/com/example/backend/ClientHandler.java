@@ -12,6 +12,8 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -29,6 +31,7 @@ public class ClientHandler extends Thread {
     final Vertx vertx;
     long timerId;
     ServerLauncher server;
+    Logger logger;
 
     public ClientHandler(ServerWebSocket websocket, Serializer serializer, AtomicInteger idCounter, Vertx vertx, ServerLauncher server) {
         this.wbs = websocket;
@@ -36,6 +39,7 @@ public class ClientHandler extends Thread {
         this.serializer = serializer;
         this.vertx = vertx;
         this.server = server;
+        logger = Logger.getLogger("Server Side - Client Handler");
         ServerLauncher.updateNumClient(1);
         System.out.println("New Client Handler");
     }
@@ -62,7 +66,13 @@ public class ClientHandler extends Thread {
                 state.numClients = ServerLauncher.numClients;
                 String toSend = SharedUtils.serverMapToString(ServerLauncher.m);
                 state.json = toSend;
-                wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(state)));
+
+                try {
+                    byte[] sending = serializer.serialize(state);
+                    wbs.writeBinaryMessage(Buffer.buffer(sending));
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, e.toString());
+                }
             });
         });
 
@@ -72,7 +82,8 @@ public class ClientHandler extends Thread {
 
 //        if (wbs.)
         wbs.closeHandler(v -> {
-            System.out.println("The socket has been closed");
+            logger.log(Level.INFO, "The socket has been closed");
+//            System.out.println("The socket has been closed");
             ServerLauncher.updateNumClient(-1);
             ServerLauncher.m.remove((Long)this.getId());
             ServerLauncher.handlers.remove((Thread)this);

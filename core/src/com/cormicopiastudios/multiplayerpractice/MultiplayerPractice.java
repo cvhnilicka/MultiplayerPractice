@@ -119,7 +119,6 @@ public class MultiplayerPractice extends Game {
 						m.put(Integer.valueOf(me.id), new PlayerPos());
 					}
 
-//					System.out.println(me.message);
 
 				}
 

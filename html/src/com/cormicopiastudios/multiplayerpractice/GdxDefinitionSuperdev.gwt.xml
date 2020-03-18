@@ -7,7 +7,6 @@
 	<inherits name='com.github.czyzby.websocket.GdxWebSocketGwt' />
 	<inherits name='com.example.shared.Shared'/>
     <inherits name='com.cormicopiastudios.multiplayerpractice.GdxDefinition' />
-    
     <collapse-all-properties />
     
 	<add-linker name="xsiframe"/>	
