@@ -11,10 +11,18 @@ public class HtmlLauncher extends GwtApplication {
         // USE THIS CODE FOR A FIXED SIZE APPLICATION
         @Override
         public GwtApplicationConfiguration getConfig () {
-                GwtWebSockets.initiate();
+
                 return new GwtApplicationConfiguration(480, 320);
         }
         // END CODE FOR FIXED SIZE APPLICATION
+
+
+        @Override
+        public ApplicationListener createApplicationListener () {
+                GwtWebSockets.initiate();
+                return new MultiplayerPractice();
+        }
+
 
         // UNCOMMENT THIS CODE FOR A RESIZABLE APPLICATION
         // PADDING is to avoid scrolling in iframes, set to 20 if you have problems
@@ -45,9 +53,4 @@ public class HtmlLauncher extends GwtApplication {
         //     }
         // }
         // END OF CODE FOR RESIZABLE APPLICATION
-
-        @Override
-        public ApplicationListener createApplicationListener () {
-                return new MultiplayerPractice();
-        }
 }

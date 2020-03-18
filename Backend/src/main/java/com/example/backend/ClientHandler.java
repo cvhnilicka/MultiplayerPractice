@@ -103,17 +103,23 @@ public class ClientHandler extends Thread {
     private void handleFrame(final ServerWebSocket webSocket, final WebSocketFrame frame) {
         // Deserializing received message:
         final Object request = serializer.deserialize(frame.binaryData().getBytes());
-        if (request instanceof PersonObject) {
-            System.out.println("Received PERSON: " + ((PersonObject) request).name);
+//        if (request instanceof PersonObject) {
+//            System.out.println("Received PERSON: " + ((PersonObject) request).name);
+//            final PersonObject response = new PersonObject();
+////            response.id = idCounter.getAndIncrement();
+//            response.thread = this.getId();
+//            response.name = "Hello client ";
+//            System.out.println(response.name);
+//            webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(response)));
+//        }
+        if (request instanceof MessageObject) {
+            System.out.println("Received MESSAGE: " + ((MessageObject) request).message);
             final PersonObject response = new PersonObject();
-            response.id = idCounter.getAndIncrement();
-            response.thread = this.getId();
+//            response.id = idCounter.getAndIncrement();
+            response.thread = (int)this.getId();
             response.name = "Hello client ";
             System.out.println(response.name);
             webSocket.writeBinaryMessage(Buffer.buffer(serializer.serialize(response)));
-        }
-        if (request instanceof MessageObject) {
-            System.out.println("Received MESSAGE: " + ((MessageObject) request).message);
 
         }
 

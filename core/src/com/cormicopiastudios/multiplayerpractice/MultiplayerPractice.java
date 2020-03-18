@@ -1,13 +1,8 @@
 package com.cormicopiastudios.multiplayerpractice;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.ApplicationAdapter;
+
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.JsonValue;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
 import com.cormicopiastudios.multiplayerpractice.Menus.MainMenu;
@@ -18,20 +13,11 @@ import com.example.shared.ServerState;
 import com.example.shared.SharedUtils;
 import com.github.czyzby.websocket.AbstractWebSocketListener;
 import com.github.czyzby.websocket.WebSocket;
-import com.github.czyzby.websocket.WebSocketAdapter;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
-import com.github.czyzby.websocket.data.WebSocketException;
 import com.github.czyzby.websocket.net.ExtendedNet;
-import com.google.gwt.core.client.JsonUtils;
 
-
-import com.google.gwt.json.client.*;
-
-
-import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +41,7 @@ public class MultiplayerPractice extends Game {
 
 	public Map<Long, PlayerPos> m = new HashMap<>();
 
-	public Long tid;
+	public int tid;
 
 	private int i = 0;
 
@@ -65,7 +51,7 @@ public class MultiplayerPractice extends Game {
 		// Note: you can also use WebSockets.newSocket() and WebSocket.toWebSocketUrl() methods.
 		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8765);
 //		socket = WebSockets.newSocket("http://127.0.0.1:8000");
-		socket.addListener((WebSocketListener) getListener());
+		socket.addListener(getListener());
 		changeScreen(LOADING);
 		m = new HashMap<>();
 
@@ -91,16 +77,18 @@ public class MultiplayerPractice extends Game {
 		return socket;
 	}
 
-	private AbstractWebSocketListener getListener() {
+	private WebSocketListener getListener() {
 		return new AbstractWebSocketListener() {
 
 			@Override
 			public boolean onOpen(final WebSocket webSocket) {
 				System.out.println("Connected");
 				message = "Connected!";
-				final PersonObject myMessage = new PersonObject();
-				myMessage.name = "Cormick";
-				webSocket.send(myMessage);
+				final MessageObject messageO = new MessageObject();
+				messageO.message = "This is a new message " + i;
+				webSocket.send(messageO);
+//				final PersonObject myMessage = new PersonObject();
+//				webSocket.send(myMessage);
 				return FULLY_HANDLED;
 			}
 
@@ -115,7 +103,7 @@ public class MultiplayerPractice extends Game {
 			protected boolean onMessage(final WebSocket webSocket, final Object packet) {
 				if (packet instanceof PersonObject) {
 					final PersonObject jsonMessage = (PersonObject) packet;
-					message = jsonMessage.name + jsonMessage.id + "!";
+					message = jsonMessage.name + "!";
 					tid = jsonMessage.thread;
 				}
 				if (packet instanceof MessageObject) {

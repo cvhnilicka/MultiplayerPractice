@@ -1,9 +1,7 @@
 package com.example.shared;
 
 public class PersonObject {
-
-    public int id;
-    public Long thread;
+    public int thread;
     public String name;
 
 }
