@@ -70,7 +70,11 @@ public class PlayScreen implements Screen {
 
     }
 
-    public void createPlayerCharacter(long tid) {
+    public void setPlayerTid(int tid) {
+        player.getComponent(PlayerComponent.class).tid = tid;
+    }
+
+    public void createPlayerCharacter(int tid) {
         float posx = -4;
         float posy = 0;
         // create the entity and all the components in it

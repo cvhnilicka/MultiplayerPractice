@@ -2,6 +2,7 @@ package com.example.shared;
 
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
@@ -31,7 +32,7 @@ public class SharedUtils {
         return toSend;
     }
 
-    public static void stringToMap(Map clientMap, String payload) {
+    public static void stringToMap(HashMap clientMap, String payload) {
         String[] lines = payload.split("\n");
 
         for(int i = 0; i < lines.length; i++) {
@@ -39,13 +40,13 @@ public class SharedUtils {
             PlayerPos newPos = new PlayerPos();
             newPos.x = Float.valueOf(posInfo[1]);
             newPos.y = Float.valueOf(posInfo[2]);
-            if (clientMap.containsKey(Long.valueOf(posInfo[0]))) {
+            if (clientMap.containsKey(Integer.valueOf(posInfo[0]))) {
                 //update
-                ((PlayerPos)clientMap.get(Long.valueOf(posInfo[0]))).x = newPos.x;
-                ((PlayerPos)clientMap.get(Long.valueOf(posInfo[0]))).y = newPos.y;
+                ((PlayerPos)clientMap.get(Integer.valueOf(posInfo[0]))).x = newPos.x;
+                ((PlayerPos)clientMap.get(Integer.valueOf(posInfo[0]))).y = newPos.y;
             } else {
                 // add
-                clientMap.put(Long.valueOf(posInfo[0]), newPos);
+                clientMap.put(Integer.valueOf(posInfo[0]), newPos);
             }
 
 

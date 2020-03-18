@@ -45,7 +45,7 @@ public class GameMaster {
             final PlayerPos posUpdate = new PlayerPos();
             posUpdate.x = pos.x;
             posUpdate.y = pos.y;
-            parent.m.put(Long.valueOf(parent.tid), posUpdate);
+            parent.m.put(Integer.valueOf(parent.tid), posUpdate);
             socket.send(posUpdate);
         }
     }

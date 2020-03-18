@@ -33,11 +33,11 @@ public class PlayerSystem extends IntervalIteratingSystem {
 
     public void updateInterval() {
         super.updateInterval();
-        Array<Long> tids = new Array<Long>();
+        Array<Integer> tids = new Array<Integer>();
         for (Entity e : playerqueue) {
-            tids.add(Long.valueOf(e.getComponent(PlayerComponent.class).tid));
+            tids.add(Integer.valueOf(e.getComponent(PlayerComponent.class).tid));
         }
-        for(Map.Entry<Long, PlayerPos> e : parent.gameMaster.parent.m.entrySet()) {
+        for(Map.Entry<Integer, PlayerPos> e : parent.gameMaster.parent.m.entrySet()) {
             if(!tids.contains(e.getKey(), false)) {
                 parent.createPlayerCharacter(e.getKey());
             }

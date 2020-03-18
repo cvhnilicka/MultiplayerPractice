@@ -37,9 +37,9 @@ public class TransformSystem extends IteratingSystem {
         TransformComponent tc = tm.get(entity);
         BodyComponent body = b2m.get(entity);
 
-        if (pc.remote && parent.gameMaster.parent.m.containsKey((Long)pc.tid)) {
-            PlayerPos p = parent.gameMaster.parent.m.get((Long)pc.tid);
-            System.out.println(pc.tid + ":" + p.x + ":" + p.y);
+        if (pc.remote && parent.gameMaster.parent.m.containsKey(pc.tid)) {
+            PlayerPos p = parent.gameMaster.parent.m.get(pc.tid);
+//            System.out.println(pc.tid + ":" + p.x + ":" + p.y);
             tc.position.x = p.x;
             tc.position.y = p.y;
             body.body.setTransform(p.x,p.y,body.body.getAngle());
