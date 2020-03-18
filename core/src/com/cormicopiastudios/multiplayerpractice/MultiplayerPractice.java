@@ -2,6 +2,7 @@ package com.cormicopiastudios.multiplayerpractice;
 
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.cormicopiastudios.multiplayerpractice.GameEngine.GameMaster;
 import com.cormicopiastudios.multiplayerpractice.Menus.LoadingScreen;
@@ -39,7 +40,7 @@ public class MultiplayerPractice extends Game {
 	private GameMaster gameMaster;
 	public final static int GAME = 3;
 
-	public Map<Long, PlayerPos> m = new HashMap<>();
+	public HashMap<Integer, PlayerPos> m = new HashMap<>();
 
 	public int tid;
 
@@ -47,6 +48,7 @@ public class MultiplayerPractice extends Game {
 
 	@Override
 	public void create() {
+		Gdx.graphics.setWindowedMode(900,720);
 		batch = new SpriteBatch();
 		// Note: you can also use WebSockets.newSocket() and WebSocket.toWebSocketUrl() methods.
 		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8765);
@@ -105,18 +107,19 @@ public class MultiplayerPractice extends Game {
 					final PersonObject jsonMessage = (PersonObject) packet;
 					message = jsonMessage.name + "!";
 					tid = jsonMessage.thread;
+					gameMaster.instance.setPlayerTid(tid);
+
 				}
 				if (packet instanceof MessageObject) {
 					final MessageObject me = (MessageObject)packet;
 					gameMaster.instance.createPlayerCharacter(me.id);
 					System.out.println(me.message);
-					m.put(Long.valueOf(me.id), new PlayerPos());
+					m.put(Integer.valueOf(me.id), new PlayerPos());
 				}
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
 					SharedUtils.stringToMap(m,temp.json);
-//					for(Entity e :)
-//					System.out.println(m);
+
 				}
 				return FULLY_HANDLED;
 			}
