@@ -1,7 +1,9 @@
 package com.cormicopiastudios.multiplayerpractice.GameEngine.Views;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -103,6 +105,17 @@ public class PlayScreen implements Screen {
 
         // add to engine
         engine.addEntity(newClient);
+    }
+
+    public void removeRemotePlayer(int tid) {
+        ImmutableArray<Entity> playerChars = this.engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
+        for (int i = 0; i < playerChars.size(); i++) {
+            if (playerChars.get(i).getComponent(PlayerComponent.class).tid == tid) {
+                world.destroyBody(playerChars.get(i).getComponent(BodyComponent.class).body);
+                this.engine.removeEntity(playerChars.get(i));
+                gameMaster.parent.m.remove(tid);
+            }
+        }
     }
 
     public void createPlayer() {

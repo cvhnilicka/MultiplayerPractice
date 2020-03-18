@@ -75,7 +75,7 @@ public class ServerLauncher {
 //            4. Create a daemon thread to support the client
 //            Go back to step 2.
 
-            Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx);
+            Thread t = new ClientHandler(webSocket,serializer,idCounter,vertx, this);
             newClientJoin(t.getId());
             ServerLauncher.handlers.add(t);
             m.put(t.getId(),new PlayerPos());
@@ -90,6 +90,12 @@ public class ServerLauncher {
         // in socket io this would be a broadcast
         for (Thread t : ServerLauncher.handlers) {
             ((ClientHandler)t).newClientMessage(tid);
+        }
+    }
+
+    public void clientLeft(long tid) {
+        for (Thread t : ServerLauncher.handlers) {
+            ((ClientHandler)t).clientHasLeft(tid);
         }
     }
 

@@ -21,14 +21,10 @@ public class SharedUtils {
             Map.Entry e = (Map.Entry)itr.next();
             Long tid = ((Long)e.getKey());
             PlayerPos pos = ((PlayerPos)e.getValue());
-//            toSend += "TID:"+tid+"-";
-//            toSend+="POS:"+pos.x+","+pos.y+"";
-//            toSend+="ENDPOS\n";
             toSend += tid + delimiter;
             toSend += pos.x + delimiter + pos.y +delimiter;
             toSend+= "\n";
         }
-//        System.out.println("::::ServerMapToString::::\n" + toSend);
         return toSend;
     }
 

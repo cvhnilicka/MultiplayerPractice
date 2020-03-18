@@ -28,12 +28,14 @@ public class ClientHandler extends Thread {
     final Serializer serializer;
     final Vertx vertx;
     long timerId;
+    ServerLauncher server;
 
-    public ClientHandler(ServerWebSocket websocket, Serializer serializer, AtomicInteger idCounter, Vertx vertx) {
+    public ClientHandler(ServerWebSocket websocket, Serializer serializer, AtomicInteger idCounter, Vertx vertx, ServerLauncher server) {
         this.wbs = websocket;
         this.idCounter = idCounter;
         this.serializer = serializer;
         this.vertx = vertx;
+        this.server = server;
         ServerLauncher.updateNumClient(1);
         System.out.println("New Client Handler");
     }
@@ -74,6 +76,7 @@ public class ClientHandler extends Thread {
             ServerLauncher.updateNumClient(-1);
             ServerLauncher.m.remove((Long)this.getId());
             ServerLauncher.handlers.remove((Thread)this);
+            this.server.clientLeft(this.getId());
             vertx.cancelTimer(timerId);
         });
 
@@ -82,8 +85,17 @@ public class ClientHandler extends Thread {
     public void newClientMessage(long tid) {
         MessageObject newClient = new MessageObject();
         newClient.message = "New Client has joined with id " + tid;
+        newClient.isLeaving = false;
         newClient.id = (int)tid;
         wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(newClient)));
+    }
+
+    public void clientHasLeft(long tid) {
+        MessageObject clientLeft = new MessageObject();
+        clientLeft.message = "Client has left: " + tid;
+        clientLeft.isLeaving = true;
+        clientLeft.id = (int)tid;
+        wbs.writeBinaryMessage(Buffer.buffer(serializer.serialize(clientLeft)));
     }
 
     private void sendUpdate() {

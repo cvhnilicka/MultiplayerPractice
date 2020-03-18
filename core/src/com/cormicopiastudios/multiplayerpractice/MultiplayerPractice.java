@@ -50,9 +50,7 @@ public class MultiplayerPractice extends Game {
 	public void create() {
 		Gdx.graphics.setWindowedMode(900,720);
 		batch = new SpriteBatch();
-		// Note: you can also use WebSockets.newSocket() and WebSocket.toWebSocketUrl() methods.
 		socket = ExtendedNet.getNet().newWebSocket("127.0.0.1", 8765);
-//		socket = WebSockets.newSocket("http://127.0.0.1:8000");
 		socket.addListener(getListener());
 		changeScreen(LOADING);
 		m = new HashMap<>();
@@ -112,10 +110,19 @@ public class MultiplayerPractice extends Game {
 				}
 				if (packet instanceof MessageObject) {
 					final MessageObject me = (MessageObject)packet;
-					gameMaster.instance.createPlayerCharacter(me.id);
-					System.out.println(me.message);
-					m.put(Integer.valueOf(me.id), new PlayerPos());
+					if (me.isLeaving) {
+						System.out.println("Client has left");
+						gameMaster.instance.removeRemotePlayer(me.id);
+					} else {
+						// add it
+						gameMaster.instance.createPlayerCharacter(me.id);
+						m.put(Integer.valueOf(me.id), new PlayerPos());
+					}
+
+//					System.out.println(me.message);
+
 				}
+
 				if (packet instanceof ServerState) {
 					ServerState temp = (ServerState)packet;
 					SharedUtils.stringToMap(m,temp.json);
